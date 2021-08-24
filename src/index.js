@@ -7,10 +7,10 @@ const app = express();
 const port = 3000;
 
 // gọi file trong routes
-const route = require('./routes');
+        const route = require('./routes');
 
 // Http logger
-app.use(morgan('combined'));
+        app.use(morgan('combined'));
 
 // Template engine
           app.engine(
