@@ -7,25 +7,25 @@ const app = express();
 const port = 3000;
 
 // gọi file trong routes
-const route = require('./routes');
+      const route = require('./routes');
 
 // Http logger 
 app.use(morgan('combined'))
 
 // Template engine
 app.engine('hbs', handlebars({
-  extname : 'hbs'
+            extname : 'hbs'
 }));
 
 app.set('view engine', 'hbs');
 
 // img
-app.use(express.static(path.join(__dirname,'public')));
+            app.use(express.static(path.join(__dirname,'public')));
 // middewear
 app.use(express.urlencoded({
   extended : true,
 }))
-app.use(express.json());
+      app.use(express.json());
 
 
 //đường dẫn vào view
