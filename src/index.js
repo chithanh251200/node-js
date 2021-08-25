@@ -21,7 +21,6 @@ const port = 3000;
 );
 
 app.set('view engine', 'hbs');
-
 // img
 app.use(express.static(path.join(__dirname, 'public')));
 // middewear
