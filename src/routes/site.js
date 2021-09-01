@@ -7,9 +7,9 @@ const siteController = require('../app/controller/SiteController');
 // đường dẫn trang news
 
 // detail
-router.use('/search', siteController.search);
+router.get('/search', siteController.search);
 // index
-router.use('/', siteController.index);
+router.get('/', siteController.index);
 
 //xuất ra
 module.exports = router;

@@ -2,30 +2,20 @@
 const newsRouter = require('./news');
 // gọi site vào
 const siteRouter = require('./site');
+// gọi course vào
+const courseRouter = require('./course');
+// gọi course vào
+const mecourseRouter = require('./me');
 
 function route(app) {
-  // news
-  app.use('/news', newsRouter);
-  //site
-  app.use('/', siteRouter);
-
-  // trang chủ
-  // app.get('/', (req, res) => {
-  //     res.render('home');
-  // })
-  // trang tin tức mới
-  // app.get('/news', (req, res) => {
-  //     res.render('news');
-  // })
-
-  // // trang tìm kiếm
-  // app.get('/search', (req, res) => {
-  //   res.render('search');
-  // })
-  // app.post('/search', (req, res) => {
-  //   console.log(req.body.q);
-  //   res.render('search');
-  // })
+    // news
+    app.use('/news', newsRouter);
+    // course
+    app.use('/course', courseRouter);
+    //site
+    app.use('/me/course/', mecourseRouter);
+    // course
+    app.use('/', siteRouter);
 }
 
 module.exports = route;

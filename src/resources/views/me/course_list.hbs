@@ -1,0 +1,162 @@
+<form name="container-form" class="container mt-4" method="POST" action="/course/handleFormAction">
+    <h2>Danh Sách Khóa Học Của Tui</h2>
+    <a href="/me/course/trash">Thùng Rác ({{deletedCount}})</a>
+    <div class="mt-4 d-flex align-items-center">
+     
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="checkbox-all">
+          <label class="custom-control-label" for="checkbox-all">Chọn tất cả</label>
+        </div>
+
+        <select class="mb-4 custom-select custom-select-sm" name="action" required>
+          <option value="">--Chọn hành động--</option>
+          <option value="delete">xóa</option>
+        </select>
+
+        <button class="mb-4 btn btn-primary btn-sm check-all-submit-btn" disabled="disabled">Apply</button>
+    </div>
+   
+    
+  <table class="table">
+      <thead>
+          <tr>
+          <th scope="col">#</th>
+          <th scope="col">stt {{{sortable '_id' _sort}}}</th>
+          <th scope="col">Tên Khoá Học {{{sortable 'name' _sort}}}</th>
+          <th scope="col">Chi Tiết   {{{sortable 'description' _sort}}}</th>
+          <th scope="col">Ngày tạo</th>
+          <th scope="col">Ngày cập nhật</th>
+          <th scope="col">Tác Vụ</th>
+          </tr>
+      </thead>
+      <tbody>
+          {{#each list_course}}
+              <tr>
+              <th> 
+                <div class="form-check"> 
+                    <input class="form-check-input" type="checkbox" name="coursesId[]" value="{{this._id}}" id="checkbox-all">
+                </div>
+              </th>
+              <th scope="row">{{this._id}}</th>
+              <td>{{this.name}}</td>
+              <td>{{this.description}}</td>
+              <td>{{this.createdAt}}</td>
+              <td>{{this.updatedAt}}</td>
+              <td>
+                  <a href="#" data-id="{{this._id}}" data-toggle="modal" data-target="#exampleModalCenter">Xóa</a>
+                  <a href="/course/edit/{{this._id}}">Sửa</a>
+              </td>
+              </tr>
+          {{else}}
+          <tr>
+            <td colspan="6">không có khóa học nào . Bạn vui lòng thêm khóa học : <a href="/course/create">tại đây </a></td>
+          </tr>
+          {{/each}}
+      </tbody>
+  </table>
+</form>
+{{!-- thông báo  --}}
+<div id="exampleModalCenter" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thông Báo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn Chắc Chắn Muốn Xóa Bản Ghi Này !</p>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-delete-course" type="button" class="btn btn-primary">Xóa Bỏ</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{{!-- form hidden method delete  --}}
+<form name="delete-course-form" method="POST"></form>
+
+
+{{!-- xử lý js để xóa id course  --}}
+<script>
+    document.addEventListener('DOMContentLoaded',function(){
+        // Tạo courseId rỗng
+        var CourseId;
+        // lấy form delete 
+        var deleteForm = document.forms['delete-course-form'];
+        // lấy id button xóa bỏ 
+        var btnDelete = document.getElementById('btn-delete-course');
+        // lấy checkbox all
+        var checkboxAll = $('#checkbox-all');
+        // lấy checkbox con 
+        var courseItemCheckbox = $('input[name="coursesId[]"]');
+        // lấy buttuon apply 
+        var checkAllSubmitBtn = $('.check-all-submit-btn');
+     
+
+        // click vào checkbox cha 
+              //=> khi click vào checkbox cha thì set lại checkbox con thành true và ngược lại 
+        checkboxAll.change(function(){ 
+          var isCheckboxAll = $(this).prop('checked');
+          courseItemCheckbox.prop('checked' , isCheckboxAll);
+          renderCheckAllSubmitButton();
+        })
+
+
+        // click vào checkbox con 
+            //=> khi đang checkbox thần cha , mún tất 1 thần con thì thần cha không đc check nữa
+        courseItemCheckbox.change(function(){
+          var isCheckboxAll_new = courseItemCheckbox.length === $('input[name="coursesId[]"]:checked').length;
+          checkboxAll.prop('checked',isCheckboxAll_new);
+          //console.log(isCheckboxAll_new)
+          renderCheckAllSubmitButton();
+        })
+
+        // hàm xử lý render check all submit button
+        function renderCheckAllSubmitButton(){
+          // điếm checkbox khi click
+          var checkedCount = $('input[name="coursesId[]"]:checked').length;
+          // nếu  checkbox khi click lớn hơn 0 thì 
+          if(checkedCount > 0){
+            //-> thì bất thẻ button apply lên
+            checkAllSubmitBtn.attr('disabled',false);
+          }
+          else{
+            //ngược lại tất
+            checkAllSubmitBtn.attr('disabled',true);
+          }
+        }
+
+        //  khi click vào button apply mà chưa đủ điều kiện -> nhưng cách này chưa triệt để lắm 
+            // lấy form tổng 
+            //var containerForm = document.forms['container-form']; // -> chỉ lấy theo attribute name -> tự chí thành ngẩm ra nên cần tìm hiểu thêm
+          
+            //containerForm.on('submit',function(){
+            // var isSubmitable = !checkAllSubmitBtn.hasClass('disabled');
+            //    if(!isSubmitable){
+            //        e.preventDefault();
+            //    }
+            //})
+
+
+        //
+        $('#exampleModalCenter').on('show.bs.modal',function(e){
+            //
+            var button = $(e.relatedTarget);
+            // khai báo lại courseId
+            CourseId = button.data('id');
+        })
+        // khi click 
+        btnDelete.onclick = function(){
+            // thêm attribute action
+            deleteForm.action = '/course/delete/'+CourseId+'?_method=DELETE';
+            // khi submit
+            deleteForm.submit();
+        }
+
+    })
+</script>
